@@ -12,7 +12,7 @@ CREATE TABLE "user" (
 --Please Create new User on Log in page and password should be hashed in DB--
  INSERT INTO "user" ("username", "password", "access_level")
  VALUES ('jordan', 'yourpath', '100');
- 
+--! Important note - this will not have a token, which will not allow you to add a user! You must disable some components and then add via postman !--
 
 --Create Provider table--
 
@@ -640,7 +640,7 @@ CREATE TABLE "bucket" (
 	"name" VARCHAR (255)
 );
 
---Insert Bucket Test Data--
+--Insert Bucket Names --
 INSERT INTO "bucket" ("name")
  VALUES ('First Contact'), ('Data Collection'), ('Scheduling'), ('Generate'), ('Referral'), ('Inactive');
 
@@ -651,12 +651,8 @@ CREATE TABLE "patient" (
 	"bucket_id" INT REFERENCES "bucket" DEFAULT 1,
 	"active" BOOLEAN NOT NULL DEFAULT 'true',
 	"column_order" INT,
-    "token" TEXT,
+    "token" TEXT
 );
-
---Insert Patient Test Data--
-INSERT INTO "patient" ("id", "bucket_id")
- VALUES (1, DEFAULT), (2, DEFAULT), (3, DEFAULT), (4, DEFAULT), (5, DEFAULT);
 
 -- Create Tag Table--
 CREATE TABLE "tag" (
@@ -674,25 +670,8 @@ INSERT INTO "tag" ("name")
 CREATE TABLE "patient_provider" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"provider_id" INT REFERENCES "provider",
-	"patient_id" INT REFERENCES "patient",
+	"patient_id" INT REFERENCES "patient"
 );
-
---Insert Patient_provider Test Data--
-INSERT INTO "patient_provider" ("provider_id", "patient_id")
- VALUES (1, 1, DEFAULT),
- (2, 1),
- (3, 1),
- (32, 1),
- (15, 2),
- (21, 3),
- (25, 4),
- (4, 4),
- (11, 4),
- (16, 5),
- (4, 5),
- (5, 5),
- (7, 5),
- (22, 5);
  
 -- Create Patient_tag JOIN table--
 CREATE TABLE "patient_tag" (
@@ -700,10 +679,6 @@ CREATE TABLE "patient_tag" (
 	"tag_id" INT REFERENCES "tag",
 	"patient_id" INT REFERENCES "patient"
 );
-
---Insert Patient_tag Test Data--
-INSERT INTO "patient_tag" ("tag_id", "patient_id")
- VALUES (1, 1);
 
 --Create Provider_tag JOIN table--
 CREATE TABLE "provider_tag" (
@@ -740,16 +715,3 @@ VALUES (1, 3), (1, 4), (1, 8),
  (24, 2), (24, 3), (24, 4), (24, 6), (24, 7), (24, 8), 
  (25, 3), (25, 4), (25, 8), (25, 28), (25, 32) 
   ;
- 
- --ALTERATIONS
---ALTER TABLE "provider"
---ADD "active" boolean DEFAULT true;
-
---ALTER TABLE "patient"
---ADD COLUMN "active" BOOLEAN NOT NULL DEFAULT true;
-
---ALTER TABLE "patient"
---ADD COLUMN "auto_recs_needed" BOOLEAN NOT NULL DEFAULT true;
-
---ALTER TABLE "patient"
---ADD COLUMN "created_by_user_id" INT REFERENCES "user";

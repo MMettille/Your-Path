@@ -64,7 +64,7 @@ router.get("/all", rejectUnauthenticated, (req, res) => {
   console.log('req.query', req.query);
   // add in if statement to check if req.query cotains patient.active information. return 400 or 401? if it does not
   // ⬇ This will grab everything we need to start displaying the patients and the providers they were match with 
-  const queryText = `SELECT "patient".id, "patient".active, "patient".auto_recs_needed, ARRAY_AGG(DISTINCT("tag".name)) as tags, ARRAY_AGG(DISTINCT("tag".id)) as tags_id, ARRAY_AGG(DISTINCT("provider".program)) as providers FROM "patient"
+  const queryText = `SELECT "patient".id, "patient".active, ARRAY_AGG(DISTINCT("tag".name)) as tags, ARRAY_AGG(DISTINCT("tag".id)) as tags_id, ARRAY_AGG(DISTINCT("provider".program)) as providers FROM "patient"
   LEFT JOIN "patient_provider" ON "patient_provider".patient_id = "patient".id
   LEFT JOIN "provider" ON "provider".id = "patient_provider".provider_id
   JOIN "patient_tag" ON "patient_tag".patient_id = "patient".id
@@ -143,11 +143,11 @@ router.post("/", rejectUnauthenticated, async (req, res) => {
     await connection.query(`BEGIN;`)
 
     // first query
-    const patientQuery = `INSERT INTO "patient" ("bucket_id", "created_by_user_id")
-  VALUES (DEFAULT, $1)
+    const patientQuery = `INSERT INTO "patient" ("bucket_id")
+  VALUES (DEFAULT)
   RETURNING "id";`;
     // first query: insert new patient with user id into patient table
-    const patientQueryResult = await connection.query(patientQuery, [req.user.id])
+    const patientQueryResult = await connection.query(patientQuery)
     console.log('result.rows', patientQueryResult.rows[0].id);
     const patientId = patientQueryResult.rows[0].id
 
